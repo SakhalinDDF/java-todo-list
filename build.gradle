@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.springframework.boot' version '2.2.0.RELEASE'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.8'
+}
+
+application {
+    mainClassName = 'com.todo.Application'
+
+    run {
+        file('.env').readLines().each() {
+            def (key, value) = it.tokenize('=')
+
+            if (key && value) {
+                environment key, value
+            }
+        }
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
