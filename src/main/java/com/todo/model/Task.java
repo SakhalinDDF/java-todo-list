@@ -2,10 +2,8 @@ package com.todo.model;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -28,27 +26,21 @@ public class Task {
     private int id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(32) NOT NULL")
-    private Status status;
+    @Column(columnDefinition = "VARCHAR(32) NOT NULL")
+    private Status status = Status.uncompleted;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "VARCHAR(255) NOT NULL")
     private String name;
 
     @CreationTimestamp
     @Column(name = "created_at", insertable = false, updatable = false, columnDefinition = "TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP")
     private OffsetDateTime createdAt;
 
-    public enum Status {
-        completed,
-        uncompleted;
-    }
-
     protected Task() {
     }
 
     public Task(String name) {
         this.name = name;
-        this.status = Status.uncompleted;
     }
 
     public int getId() {
@@ -75,16 +67,9 @@ public class Task {
         return createdAt;
     }
 
-    public ObjectNode buildObjectNode() {
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode node = mapper.createObjectNode();
-
-        node.put("id", id);
-        node.put("name", name);
-        node.put("status", status.toString());
-        node.put("created_at", createdAt.toString());
-
-        return node;
+    public enum Status {
+        completed,
+        uncompleted;
     }
 
     public static class Serializer extends JsonSerializer<Task> {
