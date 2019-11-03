@@ -16,6 +16,16 @@ public class TaskService {
         this.repository = repository;
     }
 
+    public Task find(int id) {
+        Task task = repository.findById(id);
+
+        if (task == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Task not found");
+        }
+
+        return task;
+    }
+
     @Transactional
     public Task create(String name) {
         Task task = new Task(name);
@@ -27,11 +37,7 @@ public class TaskService {
 
     @Transactional
     public Task update(int id, String name, String status) {
-        Task task = repository.findById(id);
-
-        if (task == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Task not found");
-        }
+        Task task = this.find(id);
 
         if (name != null) {
             task.setName(name);
@@ -48,12 +54,6 @@ public class TaskService {
 
     @Transactional
     public void delete(int id) {
-        Task task = repository.findById(id);
-
-        if (task == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Task not found");
-        }
-
-        repository.delete(task);
+        repository.delete(this.find(id));
     }
 }

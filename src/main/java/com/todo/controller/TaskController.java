@@ -14,8 +14,8 @@ public class TaskController {
     @Autowired
     private TaskService service;
 
-    @GetMapping
-    public ObjectNode index(@RequestParam(required = false) String status) {
+    @GetMapping(value = "/listing")
+    public ObjectNode listing(@RequestParam(required = false) String status) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode result = mapper.createObjectNode();
         ArrayNode list = mapper.createArrayNode();
@@ -23,6 +23,11 @@ public class TaskController {
         result.set("models", list);
 
         return result;
+    }
+
+    @GetMapping
+    public ObjectNode view(@RequestParam(required = true) int id) {
+        return service.find(id).buildObjectNode();
     }
 
     @PostMapping
