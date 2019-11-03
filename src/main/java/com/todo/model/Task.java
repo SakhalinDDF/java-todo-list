@@ -1,5 +1,7 @@
 package com.todo.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -27,8 +29,13 @@ public class Task {
     private String name;
 
     @CreationTimestamp
-    @Column(insertable = false, updatable = false, columnDefinition = "TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP")
-    private OffsetDateTime created_at;
+    @Column(name = "created_at", insertable = false, updatable = false, columnDefinition = "TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP")
+    private OffsetDateTime createdAt;
+
+    public enum Status {
+        completed,
+        uncompleted;
+    }
 
     protected Task() {
     }
@@ -59,11 +66,18 @@ public class Task {
     }
 
     public OffsetDateTime getCreatedAt() {
-        return created_at;
+        return createdAt;
     }
 
-    public enum Status {
-        completed,
-        uncompleted;
+    public ObjectNode buildObjectNode() {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+
+        node.put("id", id);
+        node.put("name", name);
+        node.put("status", status.toString());
+        node.put("created_at", createdAt.toString());
+
+        return node;
     }
 }
