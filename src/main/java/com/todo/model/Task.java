@@ -1,10 +1,15 @@
 package com.todo.model;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
 @Entity(name = "task")
@@ -16,6 +21,7 @@ import java.time.OffsetDateTime;
                 @Index(name = "task_idx_created_at", columnList = "created_at")
         }
 )
+@JsonSerialize(using = Task.Serializer.class)
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,5 +85,19 @@ public class Task {
         node.put("created_at", createdAt.toString());
 
         return node;
+    }
+
+    public static class Serializer extends JsonSerializer<Task> {
+        @Override
+        public void serialize(Task value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeStartObject();
+
+            gen.writeNumberField("id", value.getId());
+            gen.writeStringField("name", value.getName());
+            gen.writeStringField("status", value.getStatus().toString());
+            gen.writeStringField("created_at", value.getCreatedAt().toString());
+
+            gen.writeEndObject();
+        }
     }
 }

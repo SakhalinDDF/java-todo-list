@@ -3,6 +3,7 @@ package com.todo.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.todo.model.Task;
 import com.todo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,24 +27,24 @@ public class TaskController {
     }
 
     @GetMapping
-    public ObjectNode view(@RequestParam(required = true) int id) {
-        return service.find(id).buildObjectNode();
+    public Task view(@RequestParam(required = true) int id) {
+        return service.find(id);
     }
 
     @PostMapping
-    public ObjectNode post(@RequestParam String name) {
-        return service.create(name).buildObjectNode();
+    public Task post(@RequestParam String name) {
+        return service.create(name);
     }
 
     @PutMapping
-    public ObjectNode put(@RequestParam int id, @RequestParam(required = false) String name, @RequestParam(required = false) String status) throws HttpClientErrorException {
-        return service.update(id, name, status).buildObjectNode();
+    public Task put(@RequestParam int id, @RequestParam(required = false) String name, @RequestParam(required = false) String status) throws HttpClientErrorException {
+        return service.update(id, name, status);
     }
 
     @DeleteMapping
-    public ObjectNode delete(@RequestParam int id) {
+    public boolean delete(@RequestParam int id) {
         service.delete(id);
 
-        return new ObjectMapper().createObjectNode();
+        return true;
     }
 }
