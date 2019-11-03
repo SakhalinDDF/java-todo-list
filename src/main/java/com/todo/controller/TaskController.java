@@ -7,77 +7,87 @@ import com.todo.model.Task;
 import com.todo.model.User;
 import com.todo.service.TaskService;
 import com.todo.service.UserService;
-import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
 @RequestMapping("/api/task")
 public class TaskController {
-    private final TaskService taskService;
-    private final UserService userService;
+  private final TaskService taskService;
+  private final UserService userService;
 
-    public TaskController(TaskService taskService, UserService userService) {
-        this.taskService = taskService;
-        this.userService = userService;
-    }
+  public TaskController(TaskService taskService, UserService userService) {
+    this.taskService = taskService;
+    this.userService = userService;
+  }
 
-    @GetMapping(value = "/listing")
-    public ObjectNode listing(
-            @RequestParam String auth_token,
-            @RequestParam(required = false) String status
-    ) {
-        User user = userService.findByAuthToken(auth_token);
+  @GetMapping(value = "/listing")
+  public List<Task> listing(
+      @RequestParam String authToken,
+      @RequestParam(required = false) String status,
+      @RequestParam(required = false) Integer page,
+      @RequestParam(required = false) Integer perPage
+  ) {
+    page = page == null ? 0 : page;
+    perPage = perPage == null ? 20 : perPage;
+    User user = userService.findByAuthToken(authToken);
+    Pageable pageable = PageRequest.of(page, perPage);
 
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode result = mapper.createObjectNode();
-        ArrayNode list = mapper.createArrayNode();
+    return taskService.findAll(user, pageable);
+  }
 
-        result.set("models", list);
+  @GetMapping
+  public Task view(
+      @RequestParam String authToken,
+      @RequestParam(required = true) int id
+  ) {
+    User user = userService.findByAuthToken(authToken);
 
-        return result;
-    }
+    return taskService.find(user, id);
+  }
 
-    @GetMapping
-    public Task view(
-            @RequestParam String auth_token,
-            @RequestParam(required = true) int id
-    ) {
-        User user = userService.findByAuthToken(auth_token);
+  @PostMapping
+  public Task post(
+      @RequestParam String authToken,
+      @RequestParam String name
+  ) {
+    User user = userService.findByAuthToken(authToken);
 
-        return taskService.find(user, id);
-    }
+    return taskService.create(user, name);
+  }
 
-    @PostMapping
-    public Task post(
-            @RequestParam String auth_token,
-            @RequestParam String name
-    ) {
-        User user = userService.findByAuthToken(auth_token);
+  @PutMapping
+  public Task put(
+      @RequestParam String authToken,
+      @RequestParam int id,
+      @RequestParam(required = false) String name,
+      @RequestParam(required = false) String status
+  ) throws HttpClientErrorException {
+    User user = userService.findByAuthToken(authToken);
 
-        return taskService.create(user, name);
-    }
+    return taskService.update(user, id, name, status);
+  }
 
-    @PutMapping
-    public Task put(
-            @RequestParam String auth_token,
-            @RequestParam int id,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String status
-    ) throws HttpClientErrorException {
-        User user = userService.findByAuthToken(auth_token);
+  @DeleteMapping
+  public boolean delete(
+      @RequestParam String authToken,
+      @RequestParam int id
+  ) {
+    User user = userService.findByAuthToken(authToken);
 
-        return taskService.update(user, id, name, status);
-    }
+    taskService.delete(user, id);
 
-    @DeleteMapping
-    public boolean delete(
-            @RequestParam String auth_token,
-            @RequestParam int id
-    ) {
-        User user = userService.findByAuthToken(auth_token);
-
-        taskService.delete(user, id);
-
-        return true;
-    }
+    return true;
+  }
 }
