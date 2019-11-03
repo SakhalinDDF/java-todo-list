@@ -15,6 +15,7 @@ import java.time.OffsetDateTime;
         schema = "public",
         name = "task",
         indexes = {
+                @Index(name = "task_idx_user_id", columnList = "user_id"),
                 @Index(name = "task_idx_status", columnList = "status"),
                 @Index(name = "task_idx_created_at", columnList = "created_at")
         }
@@ -25,6 +26,19 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "user_id",
+            referencedColumnName = "id",
+            columnDefinition = "INT4 NOT NULL",
+            foreignKey = @ForeignKey(
+                    name = "task_fkey_user_id",
+                    value = ConstraintMode.CONSTRAINT,
+                    foreignKeyDefinition = "FOREIGN KEY(\"user_id\") REFERENCES \"public\".\"user\" (\"id\") ON UPDATE CASCADE ON DELETE CASCADE"
+            )
+    )
+    private User user;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(32) NOT NULL")
     private Status status = Status.uncompleted;
@@ -33,7 +47,12 @@ public class Task {
     private String name;
 
     @CreationTimestamp
-    @Column(name = "created_at", insertable = false, updatable = false, columnDefinition = "TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP")
+    @Column(
+            name = "created_at",
+            insertable = false,
+            updatable = false,
+            columnDefinition = "TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP"
+    )
     private OffsetDateTime createdAt;
 
     protected Task() {

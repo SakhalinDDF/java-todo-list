@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
-@RequestMapping("/task")
+@RequestMapping("/api/task")
 public class TaskController {
     private final TaskService taskService;
     private final UserService userService;
