@@ -2,8 +2,6 @@ package com.todo.service;
 
 import com.todo.model.Task;
 import com.todo.repository.TaskRepository;
-import org.hibernate.service.spi.InjectService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
