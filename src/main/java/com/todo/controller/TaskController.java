@@ -10,6 +10,8 @@ import com.todo.service.UserService;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,24 +35,21 @@ public class TaskController {
   }
 
   @GetMapping(value = "/listing")
-  public List<Task> listing(
+  public Page<Task> listing(
       @RequestParam String authToken,
       @RequestParam(required = false) String status,
-      @RequestParam(required = false) Integer page,
-      @RequestParam(required = false) Integer perPage
+      Pageable pageable
   ) {
-    page = page == null ? 0 : page;
-    perPage = perPage == null ? 20 : perPage;
     User user = userService.findByAuthToken(authToken);
-    Pageable pageable = PageRequest.of(page, perPage);
+    List<Task> tasks = taskService.findAll(user, pageable);
 
-    return taskService.findAll(user, pageable);
+    return new PageImpl<>(tasks, pageable, tasks.size());
   }
 
   @GetMapping
   public Task view(
       @RequestParam String authToken,
-      @RequestParam(required = true) int id
+      @RequestParam(required = true) Long id
   ) {
     User user = userService.findByAuthToken(authToken);
 
@@ -70,7 +69,7 @@ public class TaskController {
   @PutMapping
   public Task put(
       @RequestParam String authToken,
-      @RequestParam int id,
+      @RequestParam Long id,
       @RequestParam(required = false) String name,
       @RequestParam(required = false) String status
   ) throws HttpClientErrorException {
@@ -82,7 +81,7 @@ public class TaskController {
   @DeleteMapping
   public boolean delete(
       @RequestParam String authToken,
-      @RequestParam int id
+      @RequestParam Long id
   ) {
     User user = userService.findByAuthToken(authToken);
 

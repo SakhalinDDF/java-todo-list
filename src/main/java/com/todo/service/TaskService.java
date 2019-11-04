@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface TaskService {
-  public Task find(User user, int id);
+  public Task find(User user, Long id);
 
   public List<Task> findAll(User user, Pageable pageable);
 
   public Task create(User user, String name);
 
-  public Task update(User user, int id, String name, String status);
+  public Task update(User user, Long id, String name, String status);
 
-  public void delete(User user, int id);
+  public void delete(User user, Long id);
 }

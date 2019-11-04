@@ -6,6 +6,7 @@ import com.todo.repository.TaskRepository;
 import com.todo.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,14 +24,14 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public Task find(User user, int id) {
-    Task task = taskRepository.findById(id);
+  public Task find(User user, Long id) {
+    Optional<Task> taskOptional = taskRepository.findById(id);
 
-    if (task == null) {
+    if (taskOptional.isEmpty()) {
       throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Task not found");
     }
 
-    return task;
+    return taskOptional.get();
   }
 
   @Override
@@ -48,7 +49,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public Task update(User user, int id, String name, String status) {
+  public Task update(User user, Long id, String name, String status) {
     Task task = this.find(user, id);
 
     if (name != null) {
@@ -65,7 +66,7 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public void delete(User user, int id) {
+  public void delete(User user, Long id) {
     taskRepository.delete(this.find(user, id));
   }
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface UserService {
-  public User findByID(int id);
+  public User findByID(Long id);
 
   public User findByAuthToken(String authToken);
 

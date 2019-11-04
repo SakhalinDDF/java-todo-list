@@ -3,6 +3,7 @@ package com.todo.service;
 import com.todo.model.User;
 import com.todo.repository.UserRepository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,14 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User findByID(int id) {
-    User user = repository.findById(id);
+  public User findByID(Long id) {
+    Optional<User> optionalUser = repository.findById(id);
 
-    if (user == null) {
+    if (optionalUser.isEmpty()) {
       throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "User not found");
     }
 
-    return user;
+    return optionalUser.get();
   }
 
   @Override
