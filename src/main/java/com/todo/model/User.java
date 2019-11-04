@@ -14,44 +14,30 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity(name = "user")
-@Table(
-    schema = "public",
-    name = "user",
-    indexes = {
-        @Index(name = "user_idx_login", columnList = "login", unique = true),
-        @Index(name = "user_idx_auth_token", columnList = "auth_token", unique = true),
-        @Index(name = "user_idx_status", columnList = "status")
-    }
-)
+@Table(schema = "public", name = "user")
 @JsonSerialize(using = User.Serializer.class)
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Long id;
 
-  @Column(columnDefinition = "VARCHAR(255) NOT NULL")
+  @Column
   private String login;
 
-  @Column(name = "auth_token", columnDefinition = "VARCHAR(36) NOT NULL")
+  @Column(name = "auth_token")
   private String authToken;
 
   @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "VARCHAR(32) NOT NULL")
+  @Column
   private Status status = Status.active;
 
   @CreationTimestamp
-  @Column(
-      name = "created_at",
-      insertable = false,
-      updatable = false,
-      columnDefinition = "TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP"
-  )
+  @Column(name = "created_at", insertable = false, updatable = false)
   private OffsetDateTime createdAt;
 
   protected User() {
@@ -62,7 +48,7 @@ public class User {
     this.authToken = authToken;
   }
 
-  public int getId() {
+  public Long getId() {
     return id;
   }
 

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'org.springframework.boot' version '2.2.0.RELEASE'
+    id 'org.flywaydb.flyway' version '6.0.8'
 }
 
 repositories {
@@ -13,19 +14,29 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.8'
+    compile group: 'org.flywaydb', name: 'flyway-core', version: '6.0.8'
 }
+
+def env = [:]
+
+file('.env').readLines().each() {
+    if (it.contains('=') && it.indexOf('#') != 0) {
+        def (key, value) = it.tokenize('=')
+
+        env.put(key, value);
+    }
+}
+
+flyway.url = "jdbc:postgresql://${env.get('DB_HOST')}:${env.get('DB_PORT')}/${env.get('DB_NAME')}"
+flyway.user = env.get('DB_USER')
+flyway.password = env.get('DB_PASS')
+flyway.locations = ['filesystem:src/main/db/migration']
 
 application {
     mainClassName = 'com.todo.Application'
 
     run {
-        file('.env').readLines().each() {
-            def (key, value) = it.tokenize('=')
-
-            if (key && value) {
-                environment key, value
-            }
-        }
+        env.each{k, v -> environment k, v};
     }
 }
 

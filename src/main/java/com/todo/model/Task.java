@@ -17,7 +17,6 @@ import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -25,49 +24,26 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity(name = "task")
-@Table(
-    schema = "public",
-    name = "task",
-    indexes = {
-        @Index(name = "task_idx_user_id", columnList = "user_id"),
-        @Index(name = "task_idx_status", columnList = "status"),
-        @Index(name = "task_idx_created_at", columnList = "created_at")
-    }
-)
+@Table(schema = "public", name = "task")
 @JsonSerialize(using = Task.Serializer.class)
 public class Task {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private int id;
+  private Long id;
 
-  @OneToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-  @JoinColumn(
-      name = "user_id",
-      referencedColumnName = "id",
-      columnDefinition = "INT4 NOT NULL",
-      foreignKey = @ForeignKey(
-          name = "task_fkey_user_id",
-          value = ConstraintMode.CONSTRAINT,
-          foreignKeyDefinition = "FOREIGN KEY(\"user_id\") REFERENCES \"public\".\"user\" (\"id\")"
-              + " ON UPDATE CASCADE ON DELETE CASCADE"
-      )
-  )
+  @OneToOne
+  @JoinColumn(name = "user_id")
   private User user;
 
   @Enumerated(EnumType.STRING)
-  @Column(columnDefinition = "VARCHAR(32) NOT NULL")
+  @Column
   private Status status = Status.uncompleted;
 
-  @Column(columnDefinition = "VARCHAR(255) NOT NULL")
+  @Column
   private String name;
 
   @CreationTimestamp
-  @Column(
-      name = "created_at",
-      insertable = false,
-      updatable = false,
-      columnDefinition = "TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP"
-  )
+  @Column(name = "created_at", insertable = false, updatable = false)
   private OffsetDateTime createdAt;
 
   protected Task() {
@@ -78,7 +54,7 @@ public class Task {
     this.name = name;
   }
 
-  public int getId() {
+  public Long getId() {
     return id;
   }
 
