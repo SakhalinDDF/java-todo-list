@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    annotationProcessor 'org.hibernate:hibernate-jpamodelgen:5.4.8.Final'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -36,7 +38,7 @@ application {
     mainClassName = 'com.todo.Application'
 
     run {
-        env.each{k, v -> environment k, v};
+        env.each { k, v -> environment k, v };
     }
 }
 

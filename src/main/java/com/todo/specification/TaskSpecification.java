@@ -2,6 +2,7 @@ package com.todo.specification;
 
 import com.todo.entity.Task;
 import com.todo.entity.TaskStatus;
+import com.todo.entity.Task_;
 import com.todo.entity.User;
 
 import java.util.ArrayList;
@@ -39,11 +40,11 @@ public class TaskSpecification implements Specification<Task> {
     List<Predicate> predicates = new ArrayList<>();
 
     if (this.user != null) {
-      predicates.add(criteriaBuilder.equal(root.get("user"), this.user));
+      predicates.add(criteriaBuilder.equal(root.get(Task_.user), this.user));
     }
 
     if (this.status != null) {
-      predicates.add(criteriaBuilder.equal(root.get("status"), this.status));
+      predicates.add(criteriaBuilder.equal(root.get(Task_.status), this.status));
     }
 
     if (predicates.size() > 1) {
