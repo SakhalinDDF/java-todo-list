@@ -1,6 +1,6 @@
 package com.todo.service;
 
-import com.todo.model.User;
+import com.todo.entity.User;
 import org.springframework.stereotype.Service;
 
 @Service

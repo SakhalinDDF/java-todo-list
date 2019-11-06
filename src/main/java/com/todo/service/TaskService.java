@@ -1,18 +1,19 @@
 package com.todo.service;
 
-import com.todo.model.Task;
-import com.todo.model.User;
+import com.todo.entity.Task;
+import com.todo.entity.User;
+import com.todo.specification.TaskSpecification;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface TaskService {
   public Task find(User user, Long id);
 
-  public List<Task> findAll(User user, Pageable pageable);
+  public Page<Task> findAll(Specification<Task> specification, Pageable pageable);
 
   public Task create(User user, String name);
 

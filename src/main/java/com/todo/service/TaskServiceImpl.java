@@ -1,31 +1,32 @@
 package com.todo.service;
 
-import com.todo.model.Task;
-import com.todo.model.User;
+import com.todo.entity.Task;
+import com.todo.entity.TaskStatus;
+import com.todo.entity.User;
 import com.todo.repository.TaskRepository;
-import com.todo.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
 
+import com.todo.specification.TaskSpecification;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-  private final TaskRepository taskRepository;
-  private final UserRepository userRepository;
+  private final TaskRepository repository;
 
-  public TaskServiceImpl(TaskRepository taskRepository, UserRepository userRepository) {
-    this.taskRepository = taskRepository;
-    this.userRepository = userRepository;
+  public TaskServiceImpl(TaskRepository repository) {
+    this.repository = repository;
   }
 
   @Override
   public Task find(User user, Long id) {
-    Optional<Task> taskOptional = taskRepository.findById(id);
+    Optional<Task> taskOptional = repository.findById(id);
 
     if (taskOptional.isEmpty()) {
       throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Task not found");
@@ -35,15 +36,15 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
-  public List<Task> findAll(User user, Pageable pageable) {
-    return taskRepository.findAllByUser(user, pageable);
+  public Page<Task> findAll(Specification<Task> specification, Pageable pageable) {
+    return repository.findAll(specification, pageable);
   }
 
   @Override
   public Task create(User user, String name) {
     Task task = new Task(user, name);
 
-    taskRepository.save(task);
+    repository.save(task);
 
     return task;
   }
@@ -57,16 +58,16 @@ public class TaskServiceImpl implements TaskService {
     }
 
     if (status != null) {
-      task.setStatus(Task.Status.valueOf(status));
+      task.setStatus(TaskStatus.valueOf(status));
     }
 
-    taskRepository.save(task);
+    repository.save(task);
 
     return task;
   }
 
   @Override
   public void delete(User user, Long id) {
-    taskRepository.delete(this.find(user, id));
+    repository.delete(this.find(user, id));
   }
 }

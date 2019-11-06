@@ -1,18 +1,13 @@
 package com.todo.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.todo.model.Task;
-import com.todo.model.User;
+import com.todo.entity.Task;
+import com.todo.entity.TaskStatus;
+import com.todo.entity.User;
 import com.todo.service.TaskService;
 import com.todo.service.UserService;
 
-import java.util.List;
-
+import com.todo.specification.TaskSpecification;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,11 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
 @RequestMapping("/api/task")
+@ResponseBody
 public class TaskController {
   private final TaskService taskService;
   private final UserService userService;
@@ -40,27 +37,27 @@ public class TaskController {
       @RequestParam(required = false) String status,
       Pageable pageable
   ) {
+    TaskSpecification specification = new TaskSpecification();
     User user = userService.findByAuthToken(authToken);
-    List<Task> tasks = taskService.findAll(user, pageable);
 
-    return new PageImpl<>(tasks, pageable, tasks.size());
+    specification.setUser(user);
+
+    if (status != null) {
+      specification.setStatus(TaskStatus.valueOf(status));
+    }
+
+    return taskService.findAll(specification, pageable);
   }
 
   @GetMapping
-  public Task view(
-      @RequestParam String authToken,
-      @RequestParam(required = true) Long id
-  ) {
+  public Task view(@RequestParam String authToken, @RequestParam Long id) {
     User user = userService.findByAuthToken(authToken);
 
     return taskService.find(user, id);
   }
 
   @PostMapping
-  public Task post(
-      @RequestParam String authToken,
-      @RequestParam String name
-  ) {
+  public Task post(@RequestParam String authToken, @RequestParam String name) {
     User user = userService.findByAuthToken(authToken);
 
     return taskService.create(user, name);
@@ -79,10 +76,7 @@ public class TaskController {
   }
 
   @DeleteMapping
-  public boolean delete(
-      @RequestParam String authToken,
-      @RequestParam Long id
-  ) {
+  public boolean delete(@RequestParam String authToken, @RequestParam Long id) {
     User user = userService.findByAuthToken(authToken);
 
     taskService.delete(user, id);

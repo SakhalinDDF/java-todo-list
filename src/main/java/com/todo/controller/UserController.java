@@ -1,6 +1,6 @@
 package com.todo.controller;
 
-import com.todo.model.User;
+import com.todo.entity.User;
 import com.todo.service.UserService;
 
 import org.springframework.web.bind.annotation.PostMapping;

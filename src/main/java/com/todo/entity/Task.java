@@ -1,4 +1,4 @@
-package com.todo.model;
+package com.todo.entity;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -8,12 +8,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,7 +34,7 @@ public class Task {
 
   @Enumerated(EnumType.STRING)
   @Column
-  private Status status = Status.uncompleted;
+  private TaskStatus status = TaskStatus.uncompleted;
 
   @Column
   private String name;
@@ -58,11 +55,11 @@ public class Task {
     return id;
   }
 
-  public Status getStatus() {
+  public TaskStatus getStatus() {
     return status;
   }
 
-  public void setStatus(Status status) {
+  public void setStatus(TaskStatus status) {
     this.status = status;
   }
 
@@ -76,11 +73,6 @@ public class Task {
 
   public OffsetDateTime getCreatedAt() {
     return createdAt;
-  }
-
-  public enum Status {
-    completed,
-    uncompleted;
   }
 
   public static class Serializer extends JsonSerializer<Task> {

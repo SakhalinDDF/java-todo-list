@@ -1,6 +1,6 @@
 package com.todo.service;
 
-import com.todo.model.User;
+import com.todo.entity.User;
 import com.todo.repository.UserRepository;
 
 import java.util.Optional;
