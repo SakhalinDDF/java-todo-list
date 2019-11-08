@@ -1,20 +1,18 @@
 package com.todo.service;
 
+import com.todo.base.NotFoundException;
 import com.todo.entity.Task;
 import com.todo.entity.TaskStatus;
 import com.todo.entity.User;
 import com.todo.repository.TaskRepository;
 
-import java.util.List;
 import java.util.Optional;
 
-import com.todo.specification.TaskSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -29,7 +27,7 @@ public class TaskServiceImpl implements TaskService {
     Optional<Task> taskOptional = repository.findById(id);
 
     if (taskOptional.isEmpty()) {
-      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Task not found");
+      throw new NotFoundException(HttpStatus.NOT_FOUND, "Task not found");
     }
 
     return taskOptional.get();

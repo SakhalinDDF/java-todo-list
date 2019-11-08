@@ -2,7 +2,6 @@ package com.todo.service;
 
 import com.todo.entity.Task;
 import com.todo.entity.User;
-import com.todo.specification.TaskSpecification;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

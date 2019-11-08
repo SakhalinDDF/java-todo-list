@@ -1,5 +1,6 @@
 package com.todo.service;
 
+import com.todo.base.NotFoundException;
 import com.todo.entity.User;
 import com.todo.repository.UserRepository;
 
@@ -8,7 +9,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     Optional<User> optionalUser = repository.findById(id);
 
     if (optionalUser.isEmpty()) {
-      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "User not found");
+      throw new NotFoundException(HttpStatus.NOT_FOUND, "User not found");
     }
 
     return optionalUser.get();
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     User user = repository.findByAuthToken(authToken);
 
     if (user == null) {
-      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "User not found");
+      throw new NotFoundException(HttpStatus.NOT_FOUND, "User not found");
     }
 
     return user;
