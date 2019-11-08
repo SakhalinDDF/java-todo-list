@@ -1,5 +1,6 @@
 package com.todo.controller;
 
+import com.todo.base.Dich;
 import com.todo.entity.Task;
 import com.todo.entity.TaskStatus;
 import com.todo.entity.User;
@@ -37,6 +38,8 @@ public class TaskController {
       @RequestParam(required = false) String status,
       Pageable pageable
   ) {
+    new Dich().hello();
+
     TaskSpecification specification = new TaskSpecification();
     User user = userService.findByAuthToken(authToken);
 
