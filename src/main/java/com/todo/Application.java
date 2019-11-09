@@ -1,18 +1,16 @@
 package com.todo;
 
-import com.todo.base.TaskControllerLogger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 
 @SpringBootApplication
+@PropertySources({
+    @PropertySource("file:.env")
+})
 public class Application {
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);
-  }
-
-  @Bean
-  public TaskControllerLogger taskControllerLogger() {
-    return new TaskControllerLogger();
   }
 }

@@ -84,7 +84,7 @@ public class Task {
       gen.writeNumberField("id", value.getId());
       gen.writeStringField("name", value.getName());
       gen.writeStringField("status", value.getStatus().toString());
-      gen.writeStringField("created_at", value.getCreatedAt().toString());
+      gen.writeStringField("createdAt", value.getCreatedAt().toString());
 
       gen.writeEndObject();
     }

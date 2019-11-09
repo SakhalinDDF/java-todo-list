@@ -34,7 +34,7 @@ public class User {
 
   @Enumerated(EnumType.STRING)
   @Column
-  private Status status = Status.active;
+  private UserStatus status = UserStatus.active;
 
   @CreationTimestamp
   @Column(name = "created_at", insertable = false, updatable = false)
@@ -64,21 +64,16 @@ public class User {
     return authToken;
   }
 
-  public Status getStatus() {
+  public UserStatus getStatus() {
     return status;
   }
 
-  public void setStatus(Status status) {
+  public void setStatus(UserStatus status) {
     this.status = status;
   }
 
   public OffsetDateTime getCreatedAt() {
     return createdAt;
-  }
-
-  public enum Status {
-    active,
-    inactive;
   }
 
   public static class Serializer extends JsonSerializer<User> {
@@ -89,9 +84,9 @@ public class User {
 
       gen.writeNumberField("id", value.getId());
       gen.writeStringField("login", value.getLogin());
-      gen.writeStringField("auth_token", value.getAuthToken());
+      gen.writeStringField("authToken", value.getAuthToken());
       gen.writeStringField("status", value.getStatus().toString());
-      gen.writeStringField("created_at", value.getCreatedAt().toString());
+      gen.writeStringField("createdAt", value.getCreatedAt().toString());
 
       gen.writeEndObject();
     }

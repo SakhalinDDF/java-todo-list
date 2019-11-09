@@ -1,13 +1,12 @@
 package com.todo.controller;
 
-import com.todo.base.Dich;
 import com.todo.entity.Task;
 import com.todo.entity.TaskStatus;
 import com.todo.entity.User;
 import com.todo.service.TaskService;
 import com.todo.service.UserService;
-
 import com.todo.specification.TaskSpecification;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,8 +37,6 @@ public class TaskController {
       @RequestParam(required = false) String status,
       Pageable pageable
   ) {
-    new Dich().hello();
-
     TaskSpecification specification = new TaskSpecification();
     User user = userService.findByAuthToken(authToken);
 
